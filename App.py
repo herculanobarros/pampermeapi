@@ -9,13 +9,17 @@ from main.models import RevokedTokenModel, Appointment
 app = Flask(__name__)
 app.secret_key = 'pamper_me'
 api = Api(app)
-db = SQLAlchemy(app)
-db.create_all()
+db = SQLAlchemy()
 
-#setup database
+# setup database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'pamper_me'
+db.init_app(app)
+
+@app.before_first_request
+def create_tables():
+    db.create_all()
 
 
 #Setup JWT Configuration
@@ -41,7 +45,6 @@ api.add_resource(User.UserLogoutRefresh, '/logout/refresh')
 api.add_resource(User.TokenRefresh, '/token/refresh')
 api.add_resource(User.AllUsers, '/users')
 api.add_resource(User.SecretResource, '/secret')
-api.add_resource(Appointment.CreateAppointment,'/create/appointment')
 
 # Run Server
 if __name__ == '__main__':
