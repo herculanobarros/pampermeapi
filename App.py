@@ -1,28 +1,29 @@
-from flask import Flask, request
-from flask_restful import Resource, Api
-from flask_sqlalchemy import SQLAlchemy
+from flask import Flask
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker, relationship
 from flask_jwt_extended import JWTManager
-
-from main.resources import User
-from main.models import RevokedTokenModel, Appointment
+from flask_restful import Api
+import Config
+from models import RevokedTokenModel
+from resources import User
 
 app = Flask(__name__)
+app.config.from_object(Config)
 app.secret_key = 'pamper_me'
 api = Api(app)
-db = SQLAlchemy()
 
-# setup database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = 'pamper_me'
-db.init_app(app)
+Base = declarative_base()
 
-@app.before_first_request
-def create_tables():
-    db.create_all()
+db_uri = 'sqlite:///db.sqlite'
+engine = create_engine(db_uri, echo=True)
+Base.metadata.create_all(bind=engine)
+Session = sessionmaker(bind=engine)
 
+#Session
+session = Session()
 
-#Setup JWT Configuration
+# Setup JWT Configuration
 app.config['JWT_SECRET_KEY'] = 'JWT_Pamper_me'
 app.config['JWT_BLACKLIST_ENABLED'] = True
 app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access', 'refresh']
@@ -36,7 +37,6 @@ def check_if_token_in_blacklist(decrypted_token):
     return RevokedTokenModel.RevokedTokenModel.is_jti_blacklisted(jti)
 
 
-
 # API Endpoints(Resources)
 api.add_resource(User.UserRegistration, '/registration')
 api.add_resource(User.UserLogin, '/login')
@@ -48,6 +48,4 @@ api.add_resource(User.SecretResource, '/secret')
 
 # Run Server
 if __name__ == '__main__':
-    from main.db import db
-    db.init_app(app)
     app.run(debug=True)

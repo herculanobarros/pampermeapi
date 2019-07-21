@@ -1,18 +1,22 @@
-from main.db import db
+
+from sqlalchemy import Column,Integer,String,Boolean,ForeignKey
 from passlib.hash import pbkdf2_sha256 as sha256
+from App import session
+from App import Base
 import uuid
 
 
-class UserModel(db.Model):
+class UserModel(Base):
     __tablename__ = 'users'
 
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    firstName = db.Column(db.String(80), unique=False, nullable=True)
-    lastName = db.Column(db.String(80), unique=False, nullable=True)
-    password = db.Column(db.String(80), nullable=False)
-    age = db.Column(db.Integer, nullable=True)
-    phoneNumber = db.Column(db.Integer, nullable=True)
+    id = Column(Integer, primary_key=True)
+    username = Column(String(80), unique=True, nullable=False)
+    firstName = Column(String(80), unique=False, nullable=True)
+    lastName = Column(String(80), unique=False, nullable=True)
+    password = Column(String(80), nullable=False)
+    age = Column(Integer, nullable=True)
+    phoneNumber = Column(Integer, nullable=True)
+    isBabysitter = Column(Boolean, nullable=False)
 
     def __init__(self, username, password, first_name, last_name, age, phone_number):
         self.id = uuid.uuid4()
@@ -24,8 +28,8 @@ class UserModel(db.Model):
         self.phoneNumber = phone_number
 
     def save_to_db(self):
-        db.session.add(self)
-        db.session.commit()
+        session.add(self)
+        session.commit()
 
     @staticmethod
     def generate_hash(password):

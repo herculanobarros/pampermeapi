@@ -1,10 +1,11 @@
-from flask_restful import Resource, reqparse
-from main.models.User import UserModel
-from main.models.Babysitter import BabysitterModel
-from main.models.RevokedTokenModel import RevokedTokenModel
 from flask_jwt_extended import (create_access_token, create_refresh_token, jwt_required, jwt_refresh_token_required,
                                 get_jwt_identity, get_raw_jwt)
-from main.db import db
+from flask_restful import Resource, reqparse
+from sqlalchemy import exc
+
+from models.Babysitter import BabysitterModel
+from models.RevokedTokenModel import RevokedTokenModel
+from models.User import UserModel
 
 # Initialize Parser
 parser = reqparse.RequestParser()
@@ -18,13 +19,13 @@ parser.add_argument('phoneNumber', required=False)
 
 class UserRegistration(Resource):
     def post(self):
-        parser.add_argument('hourPrice', required=False)
         parser.add_argument('isBabysitter', help='This field cannot be blank', required=True)
 
         data = parser.parse_args()
         is_babysitter = data.get('isBabysitter')
 
         if not is_babysitter:
+            parser.add_argument('hourPrice', required=False)
             if BabysitterModel.find_by_username(data['username']):
                 return {'message': 'User {} already exists'.format(data['username'])}
 
@@ -36,11 +37,10 @@ class UserRegistration(Resource):
                 age=data['age'],
                 region=data['region'],
                 hour_price=data['hourPrice'],
-                phone_number=data['phoneNumber']
+                phone_number=data['phoneNumber'],
             )
             try:
                 newBabysitter.save_to_db()
-
                 # Create AcessToken and RefreshToken
                 access_token = create_access_token(identity=data['username'])
                 refresh_token = create_refresh_token(identity=data['username'])
@@ -49,8 +49,8 @@ class UserRegistration(Resource):
                     'access_token': access_token,
                     'refresh_token': refresh_token
                 }
-            except:
-                return {'message': 'Something went wrong'}, 500
+            except exc.SQLAlchemyError:
+                self.logger.error(f"{self.name}: error during event write", exc_info=1)
         else:
 
             if UserModel.find_by_username(data['username']):
@@ -66,6 +66,7 @@ class UserRegistration(Resource):
             )
             try:
                 new_user.save_to_db()
+                # Create AcessToken and RefreshToken
                 access_token = create_access_token(identity=data['username'])
                 refresh_token = create_refresh_token(identity=data['username'])
                 return {
@@ -73,8 +74,8 @@ class UserRegistration(Resource):
                     'access_token': access_token,
                     'refresh_token': refresh_token
                 }
-            except:
-                return {'message': 'Something went wrong'}, 500
+            except exc.SQLAlchemyError:
+                self.logger.error(f"{self.name}: error during event write", exc_info=1)
 
 
 class UserLogin(Resource):

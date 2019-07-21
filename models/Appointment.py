@@ -1,5 +1,5 @@
 import uuid
-from main.db import db
+from db import db
 from sqlalchemy import ForeignKey
 
 
