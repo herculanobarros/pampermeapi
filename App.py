@@ -1,7 +1,7 @@
 from flask import Flask
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, relationship
+from sqlalchemy.orm import sessionmaker
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
 import Config

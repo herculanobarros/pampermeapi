@@ -1,5 +1,4 @@
-
-from sqlalchemy import Column,Integer,String,Boolean,ForeignKey
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
 from passlib.hash import pbkdf2_sha256 as sha256
 from App import session
 import uuid
@@ -31,6 +30,7 @@ class BabysitterModel(Base):
         self.age = age
         self.hourPrice = hour_price
         self.phoneNumber = phone_number
+
     def save_to_db(self):
         session.add(self)
         session.commit()
