@@ -1,4 +1,4 @@
-from db import db
+from root.extensions import db
 
 
 class RevokedTokenModel(db.Model):
