@@ -5,9 +5,11 @@ from root.extensions import db, login_manager
 from root.resources import User
 from root.models import RevokedTokenModel
 from flask_restful import Api
+from flask_bcrypt import Bcrypt
 
 app = Flask(__name__)
 jwt = JWTManager(app)
+bcrypt = Bcrypt()
 
 
 def create_app(config_file='settings.py'):
@@ -37,6 +39,11 @@ def create_app(config_file='settings.py'):
     app.cli.add_command(create_tables)
 
     return app
+
+
+@app.route('/')
+def index():
+    return 'it works!'
 
 
 # this method is called every single time client make secure request

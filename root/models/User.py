@@ -1,66 +1,79 @@
 
-from sqlalchemy import Column,Integer,String,Boolean,ForeignKey
-from passlib.hash import pbkdf2_sha256 as sha256
+from marshmallow import fields, Schema
+from root.app import bcrypt
+from root.models.Appointment import AppointmentSchema
+import datetime
 from root.extensions import db
-import uuid
 
 
-class UserModel(db.Model):
+class User(db.Model):
     __tablename__ = 'users'
 
-    id = Column(Integer, primary_key=True)
-    username = Column(String(80), unique=True, nullable=False)
-    firstName = Column(String(80), unique=False, nullable=True)
-    lastName = Column(String(80), unique=False, nullable=True)
-    password = Column(String(80), nullable=False)
-    age = Column(Integer, nullable=True)
-    phoneNumber = Column(Integer, nullable=True)
-    isBabysitter = Column(Boolean, nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(100), unique=True, nullable=False)
+    firstName = db.Column(db.String(100), unique=False, nullable=False)
+    lastName = db.Column(db.String(100), unique=False, nullable=False)
+    password = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.String(5000), nullable=True)
+    age = db.Column(db.Integer, nullable=True)
+    phoneNumber = db.Column(db.Integer, nullable=True)
+    appointments = db.relationship('AppointmentModel', backref='appointments', lazy=True)
 
-    def __init__(self, username, password, first_name, last_name, age, phone_number):
-        self.id = uuid.uuid4()
-        self.username = username
-        self.password = password
-        self.firstName = first_name
-        self.lastName = last_name
-        self.age = age
-        self.phoneNumber = phone_number
+    def __repr__(self):
+        return '<id {}>'.format(self.id)
 
-    def save_to_db(self):
-        session.add(self)
-        session.commit()
+    def __generate_hash(self, password):
+        return bcrypt.generate_password_hash(password, rounds=10).decode("utf-8")
+
+    # add this new method
+    def check_hash(self, password):
+        return bcrypt.check_password_hash(self.password, password)
 
     @staticmethod
-    def generate_hash(password):
-        return sha256.hash(password)
+    def get_all_users():
+        return User.query.all()
 
     @staticmethod
-    def verify_hash(password, hash):
-        return sha256.verify(password, hash)
+    def get_one_user(id):
+        return User.query.get(id)
 
     @classmethod
     def find_by_username(cls, username):
         return cls.query.filter_by(username=username).first()
 
-    @classmethod
-    def find_by_id(cls, _id):
-        return cls.query.filter_by(id=_id).first()
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
 
-    @classmethod
-    def showAllUsers(cls):
-        def to_json(x):
-            return {
-                'username': x.username,
-                'password': x.password
-            }
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
 
-        return {'users': list(map(lambda x: to_json(x), UserModel.query.all()))}
-
-    @classmethod
-    def deleteAllUsers(cls):
-        try:
-            num_rows_deleted = db.session.query(cls).delete()
+    def update(self, data):
+        for key, item in data.items():
+            setattr(self, key, item)
+            self.modified_at = datetime.datetime.utcnow()
             db.session.commit()
-            return {'message': '{} rows were delete'.format(num_rows_deleted)}
-        except:
-            return {'message': 'something went wrong.'}
+
+    def __init__(self, data):
+        self.username = data.get('username')
+        self.firstName = data.get('firstName')
+        self.lastName = data.get('lastName')
+        self.description = data.get('description')
+        self.age = data.get('age')
+        self.phoneNumber = data.get('phoneNumber')
+        self.password = self.__generate_hash(data.get('password'))
+
+
+class UserSchema(Schema):
+    id = fields.Int(dump_only=True)
+    username = fields.Email(required=True)
+    password = fields.Str(required=True)
+    firstName = fields.Str(required=True)
+    lastName = fields.Str(required=True)
+    description = fields.Str(required=False)
+    age = fields.Str(required=True)
+    phoneNumber = fields.Str(required=True)
+    created_at = fields.DateTime(dump_only=True)
+    modified_at = fields.DateTime(dump_only=True)
+    appointments = fields.Nested(AppointmentSchema, many=True)
