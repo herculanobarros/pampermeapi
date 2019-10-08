@@ -3,7 +3,8 @@ from passlib.hash import pbkdf2_sha256 as sha256
 import uuid
 from root.extensions import db
 
-class BabysitterModel(db.Model):
+
+class Babysitter(db.Model):
     __tablename__ = 'babysitters'
 
     id = Column(Integer, primary_key=True)
@@ -30,8 +31,8 @@ class BabysitterModel(db.Model):
         self.phoneNumber = phone_number
 
     def save_to_db(self):
-        session.add(self)
-        session.commit()
+        db.session.add(self)
+        db.session.commit()
 
     @staticmethod
     def generate_hash(password):
@@ -57,13 +58,13 @@ class BabysitterModel(db.Model):
                 'password': x.password
             }
 
-        return {'data': list(map(lambda x: to_json(x), BabysitterModel.query.all))}
+        return {'data': list(map(lambda x: to_json(x), Babysitter.query.all))}
 
     @classmethod
     def deleteAllBabysitters(cls):
         try:
-            num_rows_deleted = session.query(cls).delete()
-            session.commit()
+            num_rows_deleted = db.session.query(cls).delete()
+            db.session.commit()
             return {'message': '{} rows were delete'.format(num_rows_deleted)}
         except:
             return {'message': 'something went wrong.'}

@@ -3,9 +3,11 @@ from flask_jwt_extended import (create_access_token, create_refresh_token, jwt_r
 from flask_restful import Resource, reqparse
 from sqlalchemy import exc
 
-from root.models import BabysitterModel
+from root.models import Babysitter
 from root.models import RevokedTokenModel
-from root.models import UserModel
+from root.models import User
+
+from root.resources import User
 
 # Initialize Parser
 parser = reqparse.RequestParser()
@@ -26,12 +28,12 @@ class UserRegistration(Resource):
 
         if not is_babysitter:
             parser.add_argument('hourPrice', required=False)
-            if BabysitterModel.find_by_username(data['username']):
+            if Babysitter.find_by_username(data['username']):
                 return {'message': 'User {} already exists'.format(data['username'])}
 
-            newBabysitter = BabysitterModel(
+            newBabysitter = Babysitter(
                 username=data['username'],
-                password=UserModel.generate_hash(data['password']),
+                password=User.generate_hash(data['password']),
                 first_name=data['firstName'],
                 last_name=data['lastName'],
                 age=data['age'],
@@ -53,12 +55,12 @@ class UserRegistration(Resource):
                 self.logger.error(f"{self.name}: error during event write", exc_info=1)
         else:
 
-            if UserModel.find_by_username(data['username']):
+            if User.find_by_username(data['username']):
                 return {'message': 'User {} already exists'.format(data['username'])}
 
-            new_user = UserModel(
+            new_user = User(
                 username=data['username'],
-                password=UserModel.generate_hash(data['password']),
+                password=User.generate_hash(data['password']),
                 first_name=data['firstName'],
                 last_name=data['lastName'],
                 age=data['age'],
@@ -83,12 +85,12 @@ class UserLogin(Resource):
         data = parser.parse_args()
 
         # check if user exist if not give the error message
-        currentUser = UserModel.find_by_username(data['username'])
+        currentUser = User.find_by_username(data['username'])
 
         if not currentUser:
             return {'message': 'user {} not exists on database'.format(data['username'])}
 
-        if UserModel.verify_hash(data['password'], currentUser.password) == currentUser.password:
+        if User.verify_hash(data['password'], currentUser.password) == currentUser.password:
 
             # Create acess_token and refreshToken
             access_token = create_access_token(identity=data['username'])
@@ -136,18 +138,18 @@ class TokenRefresh(Resource):
 
 class AllUsers(Resource):
     def get(self):
-        return UserModel.showAllUsers()
+        return User.showAllUsers()
 
     def delete(self):
-        return UserModel.deleteAllUsers()
+        return User.deleteAllUsers()
 
 
 class AllBabysitters(Resource):
     def get(self):
-        return BabysitterModel.showAllBabysitters()
+        return Babysitter.showAllBabysitters()
 
     def delete(self):
-        return BabysitterModel.deleteAllBabysitters()
+        return Babysitter.deleteAllBabysitters()
 
 
 class SecretResource(Resource):

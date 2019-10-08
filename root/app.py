@@ -2,7 +2,7 @@ from flask import Flask
 from flask_jwt_extended import JWTManager
 from root.commands import create_tables
 from root.extensions import db, login_manager
-from root.models import User
+from root.resources import User
 from root.models import RevokedTokenModel
 from flask_restful import Api
 
