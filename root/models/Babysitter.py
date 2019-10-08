@@ -1,30 +1,32 @@
-
-from sqlalchemy import Column,Integer,String,Boolean,ForeignKey
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
 from passlib.hash import pbkdf2_sha256 as sha256
-from App import session
-from App import Base
 import uuid
+from root.extensions import db
 
-
-class UserModel(Base):
-    __tablename__ = 'users'
+class BabysitterModel(db.Model):
+    __tablename__ = 'babysitters'
 
     id = Column(Integer, primary_key=True)
     username = Column(String(80), unique=True, nullable=False)
-    firstName = Column(String(80), unique=False, nullable=True)
-    lastName = Column(String(80), unique=False, nullable=True)
     password = Column(String(80), nullable=False)
-    age = Column(Integer, nullable=True)
+    firstName = Column(String(80), unique=False, nullable=False)
+    lastName = Column(String(80), unique=False, nullable=False)
+    region = Column(String(80), nullable=True)
+    age = Column(Integer, nullable=False)
     phoneNumber = Column(Integer, nullable=True)
+    experienceTime = Column(Integer, nullable=True)
+    hourPrice = Column(Integer, nullable=True)
     isBabysitter = Column(Boolean, nullable=False)
 
-    def __init__(self, username, password, first_name, last_name, age, phone_number):
+    def __init__(self, first_name, last_name, username, password, age, region, phone_number, hour_price):
         self.id = uuid.uuid4()
         self.username = username
         self.password = password
         self.firstName = first_name
         self.lastName = last_name
+        self.region = region
         self.age = age
+        self.hourPrice = hour_price
         self.phoneNumber = phone_number
 
     def save_to_db(self):
@@ -48,20 +50,20 @@ class UserModel(Base):
         return cls.query.filter_by(id=_id).first()
 
     @classmethod
-    def showAllUsers(cls):
+    def showAllBabysitters(cls):
         def to_json(x):
             return {
                 'username': x.username,
                 'password': x.password
             }
 
-        return {'users': list(map(lambda x: to_json(x), UserModel.query.all()))}
+        return {'data': list(map(lambda x: to_json(x), BabysitterModel.query.all))}
 
     @classmethod
-    def deleteAllUsers(cls):
+    def deleteAllBabysitters(cls):
         try:
-            num_rows_deleted = db.session.query(cls).delete()
-            db.session.commit()
+            num_rows_deleted = session.query(cls).delete()
+            session.commit()
             return {'message': '{} rows were delete'.format(num_rows_deleted)}
         except:
             return {'message': 'something went wrong.'}
