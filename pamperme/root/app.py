@@ -1,4 +1,7 @@
 from flask import Flask
+from pamperme.root.models import db
+from pamperme.root.resources import User
+from pamperme.root.resources import Babysitter
 import os
 
 app = Flask(__name__)
@@ -8,6 +11,10 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'XYZ')
 @app.route('/', methods=['GET'])
 def index():
     return "Hello World"
+
+
+if __name__ == '__main__':
+    app.run()
 
 # def create_app():
 #     db.init_app(app)
