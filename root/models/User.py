@@ -1,6 +1,6 @@
 
 from marshmallow import fields, Schema
-from root.app import bcrypt
+from root.models import bcrypt
 from root.models.Appointment import AppointmentSchema
 import datetime
 from root.extensions import db

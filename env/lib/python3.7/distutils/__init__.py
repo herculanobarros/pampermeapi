@@ -21,7 +21,7 @@ else:
     else:
         import importlib.machinery
 
-        distutils_path = os.path.join(distutils_path, "__init__.py")
+        distutils_path = os.path.join(distutils_path, "__init__.py.py")
         loader = importlib.machinery.SourceFileLoader("_virtualenv_distutils", distutils_path)
         if sys.version_info < (3, 5):
             import types
