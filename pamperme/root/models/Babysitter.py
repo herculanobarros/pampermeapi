@@ -1,8 +1,8 @@
 from marshmallow import fields, Schema
-from root.models import bcrypt
+from pamperme.root.models import bcrypt
 import datetime
-from root.models.Appointment import AppointmentSchema
-from root.extensions import db
+from pamperme.root.models.Appointment import AppointmentSchema
+from pamperme.root.extensions import db
 
 
 class Babysitter(db.Model):

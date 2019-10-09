@@ -1,6 +1,6 @@
 from flask import request, json, Response, Blueprint, g
-from root.models.Appointment import Appointment, AppointmentSchema
-from root.security.Authentication import Auth
+from pamperme.root.models.Appointment import Appointment, AppointmentSchema
+from pamperme.root.security import Auth
 
 appointment_api = Blueprint('appointmens', __name__)
 appointment_schema = AppointmentSchema()

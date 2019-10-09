@@ -1,4 +1,4 @@
-from root.extensions import db
+from pamperme.root.extensions import db
 
 
 class RevokedTokenModel(db.Model):

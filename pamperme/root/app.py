@@ -1,8 +1,5 @@
 from flask import Flask
 import os
-from root.extensions import db
-from root.resources.Babysitter import babysitter_api
-from root.resources.User import user_api
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'XYZ')

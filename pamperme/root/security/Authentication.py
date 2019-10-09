@@ -1,8 +1,8 @@
 from functools import wraps
 import jwt
 from flask import json, Response, request, g
-from root.models.Babysitter import Babysitter
-from root.models.User import User
+from pamperme.root.models.Babysitter import Babysitter
+from pamperme.root.models.User import User
 
 
 class Auth:

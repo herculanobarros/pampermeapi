@@ -1,9 +1,9 @@
 
 from marshmallow import fields, Schema
-from root.models import bcrypt
-from root.models.Appointment import AppointmentSchema
+from pamperme.root.models import bcrypt
+from pamperme.root.models.Appointment import AppointmentSchema
 import datetime
-from root.extensions import db
+from pamperme.root.extensions import db
 
 
 class User(db.Model):

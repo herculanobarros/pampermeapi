@@ -1,7 +1,7 @@
 from flask_restful import reqparse
 from flask import request, json, Response, Blueprint, g
-from root.models.User import User, UserSchema
-from root.security.Authentication import Auth
+from pamperme.root.models.User import User, UserSchema
+from pamperme.root.security import Auth
 
 # Initialize Parser
 parser = reqparse.RequestParser()

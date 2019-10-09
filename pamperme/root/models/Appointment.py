@@ -1,8 +1,6 @@
-import uuid
 import datetime
 from marshmallow import fields, Schema
-from root.extensions import db
-from sqlalchemy import ForeignKey
+from pamperme.root.extensions import db
 
 
 class Appointment(db.Model):

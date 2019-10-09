@@ -1,6 +1,6 @@
 from flask import request, json, Response, Blueprint, g
-from root.models.Babysitter import Babysitter, BabysitterSchema
-from root.security.Authentication import Auth
+from pamperme.root.models.Babysitter import Babysitter, BabysitterSchema
+from pamperme.root.security import Auth
 
 babysitter_api = Blueprint('babysitters', __name__)
 babysitter_schema = BabysitterSchema()
