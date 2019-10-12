@@ -1,9 +1,9 @@
 
 from marshmallow import fields, Schema
-from pamperme.root.models import bcrypt
-from pamperme.root.models.Appointment import AppointmentSchema
+from root.models import bcrypt
+from root.resources.Appointment import AppointmentSchema
 import datetime
-from pamperme.root.extensions import db
+from root.models import db
 
 
 class User(db.Model):
@@ -17,7 +17,7 @@ class User(db.Model):
     description = db.Column(db.String(5000), nullable=True)
     age = db.Column(db.Integer, nullable=True)
     phoneNumber = db.Column(db.Integer, nullable=True)
-    appointments = db.relationship('AppointmentModel', backref='appointments', lazy=True)
+    appointments = db.relationship('Appointment', lazy=True)
 
     def __repr__(self):
         return '<id {}>'.format(self.id)

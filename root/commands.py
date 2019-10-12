@@ -1,7 +1,7 @@
 import click
 from flask.cli import with_appcontext
 
-from pamperme.root.extensions import db
+from root import db
 
 
 @click.command(name='create_tables')

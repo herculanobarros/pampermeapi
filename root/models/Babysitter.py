@@ -1,8 +1,8 @@
 from marshmallow import fields, Schema
-from pamperme.root.models import bcrypt
+from root.models import bcrypt
 import datetime
-from pamperme.root.models.Appointment import AppointmentSchema
-from pamperme.root.extensions import db
+from root.models.Appointment import AppointmentSchema
+from root.models import db
 
 
 class Babysitter(db.Model):
@@ -20,7 +20,7 @@ class Babysitter(db.Model):
     hourPrice = db.Column(db.Integer, nullable=True)
     created_at = db.Column(db.DateTime)
     modified_at = db.Column(db.DateTime)
-    appointments = db.relationship('AppointmentModel', lazy=True)
+    appointments = db.relationship('Appointment', lazy=True)
 
     def __init__(self, data):
         self.username = data.get('username')

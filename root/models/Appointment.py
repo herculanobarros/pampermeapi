@@ -1,6 +1,6 @@
 import datetime
 from marshmallow import fields, Schema
-from pamperme.root.extensions import db
+from root.models import db
 
 
 class Appointment(db.Model):
@@ -36,11 +36,11 @@ class Appointment(db.Model):
 
     @staticmethod
     def get_all_appointment():
-        return AppointmentModel.query.all()
+        return Appointment.query.all()
 
     @staticmethod
     def get_one_appointment(id):
-        return AppointmentModel.query.get(id)
+        return Appointment.query.get(id)
 
     def __repr__(self):
         return '<id {}>'.format(self.id)
