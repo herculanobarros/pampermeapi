@@ -1,4 +1,3 @@
-
 from marshmallow import fields, Schema
 from root.models import bcrypt
 from root.resources.Appointment import AppointmentSchema

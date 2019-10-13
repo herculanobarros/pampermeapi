@@ -23,7 +23,7 @@ def get_a_babysitter(babysitter_id):
 def get_all():
     babysitters = Babysitter.get_all_babysitters()
     ser_babysitters = babysitter_schema.dump(babysitters, many=True).data
-    return custom_response({"data" : ser_babysitters}, 200)
+    return custom_response({"data": ser_babysitters}, 200)
 
 
 # LOGIN BABYSITTER

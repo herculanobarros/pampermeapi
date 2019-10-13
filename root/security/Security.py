@@ -1,5 +1,5 @@
 from werkzeug.security import safe_str_cmp
-from user import User
+from root.models.User import User
 
 
 users = [

@@ -61,7 +61,7 @@ def get_a_user(user_id):
 
 
 # GET ALL USERS
-@user_api.route('/users', methods=['GET'])
+@user_api.route('/all', methods=['GET'])
 def get_all():
     users = User.get_all_users()
     ser_users = user_schema.dump(users, many=True).data

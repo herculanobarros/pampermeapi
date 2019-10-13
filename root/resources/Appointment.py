@@ -1,7 +1,7 @@
 from flask import request, json, Response, Blueprint, g
 from root.security.Authentication import Auth
 from root.models.Appointment import AppointmentSchema, Appointment
-appointment_api = Blueprint('appointmens', __name__)
+appointment_api = Blueprint('appointments', __name__)
 appointment_schema = AppointmentSchema()
 
 

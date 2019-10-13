@@ -1,16 +1,21 @@
 from flask import Flask
 from root.models import db
-from root.resources import User
 from root.resources import Babysitter
-import os
+from root.resources import User
+from root.settings import manager
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'XYZ')
+app.config['DEBUG'] = True
 
-
-@app.route('/', methods=['GET'])
-def index():
-    return "Hello World"
+POSTGRES = {
+    'user': 'postgres',
+    'pw': 'password',
+    'db': 'my_database',
+    'host': 'localhost',
+    'port': '5432',
+}
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://%(user)s:\
+%(pw)s@%(host)s:%(port)s/%(db)s' % POSTGRES
 
 
 def create_app():
@@ -26,4 +31,5 @@ def create_app():
 
 if __name__ == '__main__':
     create_app()
+    manager.run()
     app.run()
