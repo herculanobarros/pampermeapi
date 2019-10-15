@@ -22,7 +22,7 @@ def get_a_babysitter(babysitter_id):
 @babysitter_api.route('/all', methods=['GET'])
 def get_all():
     babysitters = Babysitter.get_all_babysitters()
-    ser_babysitters = babysitter_schema.dump(babysitters, many=True).data
+    ser_babysitters = babysitter_schema.dump(babysitters, many=True)
     return custom_response({"data": ser_babysitters}, 200)
 
 
@@ -47,7 +47,7 @@ def login():
     if not babysitter.check_hash(data.get('password')):
         return custom_response({'error': 'invalid credentials'}, 400)
 
-    ser_data = babysitter_schema.dump(babysitter).data
+    ser_data = babysitter_schema.dump(babysitter)
 
     token = Auth.generate_token(ser_data.get('id'))
 
@@ -58,21 +58,17 @@ def login():
 @babysitter_api.route('/', methods=['POST'])
 def create():
     req_data = request.get_json()
-    data, error = babysitter_schema.load(req_data)
 
-    if error:
-        return custom_response(error, 400)
-
-    babysitter_in_db = Babysitter.find_by_username(data.get('username'))
+    babysitter_in_db = Babysitter.find_by_username(req_data.get('username'))
     if babysitter_in_db:
         message = {'error': 'User already exist, please supply another email address'}
         return custom_response(message, 400)
 
     # save babysitter in DB
-    babysitter = Babysitter(data)
+    babysitter = Babysitter(req_data)
     babysitter.save()
 
-    babysitter_data = babysitter_schema.dump(babysitter).data
+    babysitter_data = babysitter_schema.dump(babysitter)
     token = Auth.generate_token(babysitter_data.get('id'))
 
     return custom_response({'accessToken': token}, 200)
