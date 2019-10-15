@@ -1,6 +1,6 @@
 from marshmallow import fields, Schema
 from root.models import bcrypt
-from root.resources.Appointment import AppointmentSchema
+from root.models.Appointment import AppointmentSchema
 import datetime
 from root.models import db
 
@@ -51,10 +51,10 @@ class User(db.Model):
     def update(self, data):
         for key, item in data.items():
             setattr(self, key, item)
-            self.modified_at = datetime.datetime.utcnow()
             db.session.commit()
 
     def __init__(self, data):
+        self.modified_at = datetime.datetime.utcnow()
         self.username = data.get('username')
         self.firstName = data.get('firstName')
         self.lastName = data.get('lastName')

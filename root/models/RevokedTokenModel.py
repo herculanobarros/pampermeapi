@@ -2,11 +2,11 @@ from root.models import db
 
 
 class RevokedTokenModel(db.Model):
-    __tablename__= 'revoked_tokens'
+    __tablename__ = 'revoked_tokens'
 
     id = db.Column(db.Integer, primary_key=True)
 
-    #identifier of token
+    # identifier of token
     jti = db.Column(db.String(120))
 
     def add(self):

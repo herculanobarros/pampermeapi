@@ -21,21 +21,20 @@ user_schema = UserSchema()
 @user_api.route('/', methods=['POST'])
 def create():
     req_data = request.get_json()
-    data, error = user_schema.load(req_data)
 
-    if error:
-        return custom_response(error, 400)
+    # if error:
+    #     return custom_response(error, 400)
 
-    user_in_db = User.find_by_username(data.get('username'))
+    user_in_db = User.find_by_username(req_data.get('username'))
     if user_in_db:
         message = {'error': 'User already exist, please supply another email address'}
         return custom_response(message, 400)
 
     # save user in DB
-    user = User(data)
+    user = User(req_data)
     user.save()
 
-    ser_data = user_schema.dump(user).data
+    ser_data = user_schema.dump(user)
     token = Auth.generate_token(ser_data.get('id'))
     return custom_response({'accessToken': token}, 200)
 
@@ -64,7 +63,7 @@ def get_a_user(user_id):
 @user_api.route('/all', methods=['GET'])
 def get_all():
     users = User.get_all_users()
-    ser_users = user_schema.dump(users, many=True).data
+    ser_users = user_schema.dump(users, many=True)
     return custom_response({"data": ser_users}, 200)
 
 

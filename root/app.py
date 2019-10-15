@@ -2,10 +2,9 @@ from flask import Flask
 from root.models import db
 from root.resources import Babysitter
 from root.resources import User
-from root.settings import manager
 
 app = Flask(__name__)
-app.config['DEBUG'] = True
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgres://postgres:pampermedb@localhost:5432/pampermedb"
 
 
 def create_app():
@@ -21,5 +20,4 @@ def create_app():
 
 if __name__ == '__main__':
     create_app()
-    manager.run()
     app.run()

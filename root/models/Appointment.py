@@ -11,14 +11,12 @@ class Appointment(db.Model):
     userId = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     babysitterId = db.Column(db.Integer, db.ForeignKey('babysitters.id'), nullable=False)
     created_at = db.Column(db.DateTime)
-    modified_at = db.Column(db.DateTime)
 
     def __init__(self, data):
         self.user_id = data.get('userId')
         self.babysitter_id = data.get('babysitterId')
         self.description = data.get('description')
         self.created_at = data.get('startDate')
-        self.modified_at = data.get('endDate')
 
     def save(self):
         db.session.add(self)
@@ -52,4 +50,3 @@ class AppointmentSchema(Schema):
     userId = fields.Int(required=True)
     babysitterId = fields.Int(required=True)
     created_at = fields.DateTime(dump_only=True)
-    modified_at = fields.DateTime(dump_only=True)
